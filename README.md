@@ -13,12 +13,12 @@ This notebook has been created with Mathematica Commercial License L3302-6545.
 
 Generates a regular polygon of n-sides, in which n is user-chosen.
 
-The pdf of the same name is the default output. 
+The pdf of the same name is the default output upon Evaluate Notebook
+followed by Save as PDF. 
 
-The txt of the same name is the product of: 
-	pdftotext -layout Make\ Regular\ n-gon.pdf
-from which the source code should be extractable. 
+Similarly with the rtf file. 
 
 I'm in the process of figuring out how to get around github making a 
-mess of .nb files on downloading. #totalgitnewbie. Hmm. Is that what pull 
-requests are for?
+mess of .nb files on downloading. I believe the fix is to transfer nb
+files as binary, but I have not worked on this yet. 
+Sounds like a pull request. 
