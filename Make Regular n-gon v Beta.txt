@@ -1,0 +1,133 @@
+Make Regular n-gon
+                        This notebook has been created with Mathematica Commercial License L3302-6545 .
+ June 5, 2020
+
+
+ Copyright (c) David M. Morgan, Ph.D.
+ GNU General Public License, v. 3.0 or later
+
+
+ Antigonish Landing, NS B2G 2L2 Canada
+ dmmorgan@gmail.com
+ (902) 318-4906
+                                                                                                                 DMM - Consultant
+ Originally developed as a means of teaching myself how to implement rotation matrices in
+ Mathematica, I later used the base code to create polygons matching the ages of my children, to use as
+ line-art in custom-made birthday cards.
+
+ Algorithm:
+ 1. Request a user-chosen number of vertices n | n ≳ 3, and draw the corresponding n-gon according to
+ the following:
+
+
+ 2. Create vertices, determining them as the {x,y} coordinates of the set of vectors given by rotating an
+                                          1 (2 π ) 2 (2 π )          n (2 π )
+ initial vector {0, 1} through angles {      n
+                                                  , n ,       ...,      n
+                                                                              }.   Note that this recreates the initial vertex as
+ the last vertex; a choice taken for ease of defining the lines in a later step using Table[] .
+
+
+ 3. Proceeding from vertices 1 and 2, followed by 2 and 3, then by 3 and 4, and so on, define line seg -
+ ments between the coordinates of successive vertices.
+
+ Code:
+ Define a NotebookName.
+
+
+ Define a preferred working directory and go work in it.
+
+ NotebookName = "Make Regular n- gon v Beta.nb";
+
+
+ wd = "/shared /OneDrive /code /mathematica /Commercial /Regular n- gon";
+ SetDirectory [wd ]
+
+ /shared /OneDrive /code /mathematica /Commercial /Regular n- gon
+2   Make Regular n-gon v Beta.nb
+
+
+
+
+         Ask the user for the desired number of vertices.
+
+         numvertices = Input ["Draw a polygon with how many sides ?" , 9];
+         If [numvertices < 3, "No ! That's not going to work !!!", "Phew ! A closed object ."]
+
+         Phew ! A closed object .
+
+         Define an appropriate rotation matrix, one with an iterator that can be used to implement successive
+         stepwise increases in the value of the rotation angle.
+
+
+         One may consult any standard linear algebra text to confirm that a general, 2-dimensional rotation
+         matrix is:
+
+
+                                                                 ,
+
+
+
+         in which θ is the angle of rotation, taking positive values to mean clockwise; as indicated above. In this
+                                                     2π
+         case, θ takes on values i                    n
+                                                          , in which n = numvertices and i | i ∈ {1, 2, 3, ..., n}.
+
+         RR = RotationMatrix [ 2 i Pi / numvertices ];
+         RR // MatrixForm
+                  2iπ                  2iπ
+          Cos              - Sin              
+                   9                    9
+                  2iπ                  2iπ
+          Sin                Cos          
+                   9                    9
+
+
+         Compute the vertices.
+
+         vertices = Table [
+              { 0, 1} . RR,
+              { i, 0, numvertices }
+          ]
+
+                                 2π                  2π                     π                π             3         1                 π                π
+         {0, 1},  Sin               , Cos               ,  Cos         , Sin           ,          ,-        ,  Sin        , - Cos         ,
+                                  9                   9                    18              18             2          2                 9                9
+                       π                π                    3        1                  π                π                    2π                2π
+          - Sin          , - Cos          , -             ,-        , - Cos         , Sin           , - Sin         , Cos              , {0, 1}
+                       9                9                   2         2                  18               18                    9                 9
+
+         Define lines as those between vertices[[1]] & vertices[[2]], vertices[[2]] & vertices[[3]], vertices[[3]] &
+         vertices[[4]] ... vertices[[-1+Length[vertices]]]                          & vertices[[Length[vertices]]]. Note this is the justification
+         of the duplication of the initial vertex .
+                                                              Make Regular n-gon v Beta.nb   3
+
+
+
+
+lines = Line [
+    Table [
+        { vertices [[i]], vertices [[1 + i]]} ,
+        { i, 1, - 1 + Length [vertices ]}
+    ]
+  ];
+
+Show the object.
+
+Graphics [lines ]
+
+
+
+
+Highlight the line containing the duplicated vertex in red.
+4   Make Regular n-gon v Beta.nb
+
+
+
+
+         Show [
+             Graphics [Line [Table [
+                 lines [[1, i]], {i, 1, - 1 + numvertices }]]],
+             Graphics [{Red, Line [lines [[1, numvertices ]]]}]
+         ]
+

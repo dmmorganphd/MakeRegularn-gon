@@ -1,0 +1,670 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     27734,        662]
+NotebookOptionsPosition[     24320,        601]
+NotebookOutlinePosition[     24920,        622]
+CellTagsIndexPosition[     24877,        619]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Make Regular n-gon", "Title",
+ CellChangeTimes->{{3.79987800570578*^9, 
+  3.799878010303668*^9}},ExpressionUUID->"969e6714-a59c-4d3f-9d75-\
+e00f7d8b7b2b"],
+
+Cell[TextData[StyleBox["This notebook has been created with Mathematica \
+Commercial License L3302-6545 . ",
+ FontSlant->"Italic",
+ FontColor->RGBColor[1, 0, 1]]], "Text",
+ CellChangeTimes->{{3.799958787694915*^9, 3.799958917176119*^9}, {
+  3.799959159335161*^9, 3.799959296183918*^9}, {3.799962639485429*^9, 
+  3.7999626852427797`*^9}, {3.799962798917831*^9, 3.799962800990922*^9}, {
+  3.800293824579274*^9, 3.800293865820447*^9}},
+ TextAlignment->Right,ExpressionUUID->"db93a966-6d4f-4e83-aa73-f274025bcb39"],
+
+Cell["\<\
+June 4, 2020
+
+Copyright (c) David M. Morgan, Ph.D.
+GNU General Public License, v. 3.0 or later
+
+Antigonish Landing, NS B2G 2L2 Canada
+dmmorgan@gmail.com
+(902) 318-4906\
+\>", "Text",
+ CellChangeTimes->{{3.7999628047731113`*^9, 3.79996281342213*^9}, {
+  3.799962866758527*^9, 3.7999628956860027`*^9}, {3.8002938530727587`*^9, 
+  3.8002938711634073`*^9}, {3.800293909924945*^9, 3.8002944345050583`*^9}, {
+  3.8003134957690477`*^9, 3.800313604548006*^9}, {3.8003136433575687`*^9, 
+  3.8003136502424507`*^9}, {3.800313680738512*^9, 3.800313933550432*^9}, {
+  3.80031396556758*^9, 3.800314054692861*^9}, {3.800314164846736*^9, 
+  3.800314167918345*^9}},ExpressionUUID->"3630ed3d-5165-4127-8c22-\
+b13aeac4d0a0"],
+
+Cell[TextData[StyleBox["DMM - Consultant",
+ FontSlant->"Italic",
+ FontColor->RGBColor[1, 0, 1]]], "Text",
+ CellChangeTimes->{{3.7999626898995934`*^9, 3.799962698385325*^9}, {
+  3.800049637424473*^9, 3.8000496454342422`*^9}, {3.800293883476203*^9, 
+  3.800293906281486*^9}},
+ TextAlignment->Right,ExpressionUUID->"8023e40d-e453-4cd2-9faf-9a898070bf8a"],
+
+Cell["\<\
+Originally developed as a means of teaching myself how to implement rotation \
+matrices in 
+Mathematica, I later used the base code to create polygons matching the ages \
+of my children, to use as line-art in custom-made birthday cards.\
+\>", "Text",
+ CellChangeTimes->{{3.800049655797071*^9, 3.8000496590615063`*^9}, {
+   3.8000496906245403`*^9, 3.8000498292111*^9}, {3.800049912252818*^9, 
+   3.800049952103775*^9}, {3.800052778912959*^9, 3.800052779717979*^9}, 
+   3.800314251582643*^9},ExpressionUUID->"141a584b-ee48-4530-95ff-\
+340adecfc75b"],
+
+Cell[TextData[StyleBox["Algorithm: ", "Subsubsection"]], "Text",
+ CellChangeTimes->{{3.799879547156506*^9, 
+  3.799879558304983*^9}},ExpressionUUID->"f10ad161-96a8-441f-859b-\
+38f8adcec4fa"],
+
+Cell[TextData[{
+ "1. Request a user-chosen number of vertices n | n \[GreaterTilde] 3, and \
+draw the corresponding n-gon according to the following: \n\n2. Create \
+vertices, determining them as the {x,y} coordinates of the set of vectors \
+given by rotating an initial vector {0, 1} through angles {",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{" ", 
+    RowBox[{
+     FractionBox[
+      RowBox[{"1", " ", 
+       RowBox[{"(", 
+        RowBox[{"2", "\[Pi]"}], ")"}]}], "n"], ",", " ", 
+     FractionBox[
+      RowBox[{"2", " ", 
+       RowBox[{"(", 
+        RowBox[{"2", "\[Pi]"}], ")"}]}], "n"], ",", " ", "...", ",", " ", 
+     FractionBox[
+      RowBox[{"n", " ", 
+       RowBox[{"(", 
+        RowBox[{"2", "\[Pi]"}], ")"}]}], "n"]}]}], TraditionalForm]],
+  ExpressionUUID->"48a184de-44cc-466e-a819-a3807f13adaa"],
+ "}. Note that this recreates the initial vertex as the last vertex; a choice \
+taken for ",
+ StyleBox["ease of defining the lines in a later step using Table[]",
+  FontColor->RGBColor[1, 0, 0]],
+ ". \n\n3. Proceeding from vertices 1 and 2, followed by 2 and 3, then by 3 \
+and 4, and so on, define line segments between the coordinates of successive \
+vertices. "
+}], "Text",
+ CellChangeTimes->{{3.7998780941427727`*^9, 3.799878334125143*^9}, {
+   3.7998783942057953`*^9, 3.7998784900607157`*^9}, {3.799878526626555*^9, 
+   3.799878695428211*^9}, {3.799878752367022*^9, 3.799879078286283*^9}, {
+   3.7998793535082684`*^9, 3.7998794272864*^9}, {3.799879514168744*^9, 
+   3.799879564548319*^9}, {3.799923649081745*^9, 3.799923748673438*^9}, {
+   3.799923781188635*^9, 3.799924220246252*^9}, 3.799944448724718*^9, {
+   3.7999447483864183`*^9, 3.7999447483865337`*^9}, {3.7999448068243103`*^9, 
+   3.799944862632226*^9}, {3.799952570997583*^9, 3.799952571178763*^9}, {
+   3.799959358026383*^9, 3.7999595701396303`*^9}, {3.799960801883029*^9, 
+   3.799960805746484*^9}, {3.799962048295986*^9, 3.799962056927161*^9}, {
+   3.79996299047149*^9, 3.7999630049009743`*^9}, {3.800052119584202*^9, 
+   3.8000521201527843`*^9}},ExpressionUUID->"9bd22c0a-b9d3-42b1-8f8c-\
+54fb4bba4be6"],
+
+Cell[TextData[StyleBox["Code:", "Subsubsection"]], "Text",
+ CellChangeTimes->{{3.800050154457774*^9, 3.8000501567527103`*^9}, 
+   3.800050198446967*^9},ExpressionUUID->"a3b81cd0-b417-448e-8b1d-\
+cacd4367104e"],
+
+Cell["\<\
+Define a NotebookName. 
+
+Define a preferred working directory and go work in it. \
+\>", "Text",
+ CellChangeTimes->{{3.8000502122090797`*^9, 3.80005026514783*^9}, {
+  3.800052505727625*^9, 3.800052516692524*^9}, {3.8002945173456163`*^9, 
+  3.8002945274503937`*^9}},ExpressionUUID->"d66f5129-59b9-4633-9311-\
+b8680e4588c4"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{
+   "NotebookName", " ", "=", " ", "\"\<Make Regular n-gon v Beta.nb\>\""}], 
+   ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+  "wd", " ", "=", " ", 
+   "\"\</shared/OneDrive/code/mathematica/Commercial/Regular n-gon\>\""}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"SetDirectory", "[", "wd", "]"}]}], "Input",
+ CellChangeTimes->{{3.800052307767639*^9, 3.800052364127432*^9}, {
+   3.8000524595202293`*^9, 3.800052484875231*^9}, 3.800052570404291*^9, {
+   3.800294470424644*^9, 
+   3.800294500314954*^9}},ExpressionUUID->"00cb8407-1b72-4a23-9667-\
+c69030aaa6e7"],
+
+Cell[BoxData["\<\"/shared/OneDrive/code/mathematica/Commercial/Regular \
+n-gon\"\>"], "Output",
+ CellChangeTimes->{
+  3.800188187684581*^9},ExpressionUUID->"472ba4e3-abc7-4cde-bfdb-\
+667f6dbac881"]
+}, Open  ]],
+
+Cell["Ask the user for the desired number of vertices. ", "Text",
+ CellChangeTimes->{{3.800050245913212*^9, 3.800050247962226*^9}, {
+  3.800050278491934*^9, 
+  3.8000502862163477`*^9}},ExpressionUUID->"49f252f9-97b1-4baa-9468-\
+f1d9aadc72b7"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"numvertices", " ", "=", " ", 
+   RowBox[{"Input", "[", 
+    RowBox[{
+    "\"\<Draw a polygon with how many sides?\>\"", " ", ",", " ", "9"}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"numvertices", " ", "<", " ", "3"}], ",", " ", 
+   "\"\<No! That's not going to work!!!\>\"", ",", 
+   "\"\<Phew! A closed object.\>\""}], "]"}]}], "Input",
+ CellChangeTimes->{{3.7998798807190323`*^9, 3.7998799801948957`*^9}, {
+   3.7999624199811163`*^9, 3.799962444658036*^9}, {3.800050295660816*^9, 
+   3.800050301511046*^9}, 3.800050658555348*^9, {3.800052599016079*^9, 
+   3.800052599727715*^9}, {3.800052817861864*^9, 3.8000528581948757`*^9}, {
+   3.800052994611018*^9, 
+   3.800053001239141*^9}},ExpressionUUID->"6b03e2f6-2feb-49b4-b817-\
+25b37e497bc7"],
+
+Cell[BoxData["\<\"Phew! A closed object.\"\>"], "Output",
+ CellChangeTimes->{3.8000528634497967`*^9, 3.800053006640172*^9, 
+  3.8001881905630074`*^9},ExpressionUUID->"b745d1de-cc31-45e3-9800-\
+3d8a4d0b6f03"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Define an appropriate rotation matrix, one with an iterator that can be \
+used to implement successive stepwise increases in the value of the rotation \
+angle. \n\nOne may consult any standard linear algebra text to confirm that a \
+general, 2-dimensional rotation matrix is: \n\n\t",
+ Cell[BoxData[
+  GraphicsBox[
+   TagBox[RasterBox[CompressedData["
+1:eJztXTFuGzEQNBIVKVSkch+/QGVKp0xnOMgDLEQx0jiALMDIF/wI9/mAXqF3
++BuKxsEEG4rk3dGkSa63GFvi8Xjc4Ry5XB5PH5Y/L7+/OTk5uX13+HN5dfdp
+vb769eX94cvXm9sf1zerb59vNqvr1frj8u0hcXHA7wNmB+z3+y6BqrvYbrf7
+2vUypGM2mx216cPDQ7dtSk3udrt/qF0nw/Mg2xKYz+fda/Tx8bHb+huGcXp6
+ahotBNTr4uJiv9lsnv7Xrk8qoA+Mv7l9qLH8mEbLAHUCt6zb+fn5U1vUrlcK
+oE2Mtzk1OoUf02gZgFfZpuB/sVg0V88e+DGN5gf4Bq8ybblcHqW9VkzlxzSa
+HxgX7+/v/6sTxrJeNYq5NTSSK2YylR/NGgWnsB33KOHmRR767fTd3TzgB+fi
+uCzLd02MX3/DzcftcnZ21iTPMfvAD8Zg2ER/ETZCN5hHQWsAz0XeWJ+Rwo9W
+jYILcCjvfdfnIdfyfMbjmMY2cts0NA/FPYHr4j/BNm5xbj/WPtjkzmlop+QY
+ZSEtdL0UfrRqFHa5NoMPea9Ci765pOQZ3PjGoFA/ijLdY+hnWl0rGWufjyuk
+ufrGeUgPXS+FH40axXekuz6PBMccn4+FtsC9LnnlvR8rk/Vx+cR5sXZLhbse
+E0Ns/B1jX0ijrt6GNJrCj0aNwp6hfov3bkijslzGmsEj0kPxbJTlKxP5Q/1u
+KjhGj0Xs+mPsy6HRVH40avS5/Sj4ol+PfLJ8fA7NQdkGMo33QmuxB8nDGPty
+anQqPxo1Sv58vru01TcPANj3kENfHukLuPVx+W15fWmsfTnH+qn8hDSK8zC/
+QJlsbwLpvhhNDUyZ1yOf5BR2yzk8z5NpaEOXcxwLrYmAG16zh7Wlsfb59Jii
+0RR+Yv0ox0Pfcfq5tXU6FB+lLxbqL2CjjKHisyxPxv5iMVR5TVleTW7GYMg+
+8MPYEP1Gcsb+i/ET6dPieMhnn8pPTKPSL3PBeUntcaxlX8+QBzGNol8OrU9x
+7jsUiykN06h+xDQaiwm0srZnGtWPkEYZJ3B9CugB2oytd70kTKP6EZvX09+k
+T428Q88MSDDONhYp/bJpVD9CGoUWXc1AC754Q02YRvUjpFH4or7nUGJz/Row
+jeqHT6P0RUNxUdOo4SXh06j7TIUEn5EZU7b5o4Yc8GkUvmhoPQuaaGnPg2lU
+P3wa5bOEvvw4xv4O2uh9nan23nHNyMWB1CjHZq7NumvXbFPkaWU9+rkarb13
+XCtycqD12byasL31eTkwjeaF7a3Pz8Fr12jtveMakZsD7Rptfe94SWh5v4Bm
+jfawd7wUNL1fQLNGe9g7Xgqa3i+gWaPkrOW94yWg7f0C2jXa+t7xEtD2fgHN
+Gu1h73gJaHu/gGaN9rB3vBQ0vV9Au0Zb3zteCpreL6Bdo63vHS8JLe8X0KxR
+gw6YRg2twzRqaB2mUUPrMI0aWocGjdpv2uqCxt+0dWG/Dd43Qr8N/gdjAOOb
+
+     "], {{0, 48}, {169, 0}}, {0, 255},
+     ColorFunction->RGBColor],
+    BoxForm`ImageTag["Byte", ColorSpace -> "RGB", Interleaving -> True],
+    Selectable->False],
+   BaseStyle->"ImageGraphics",
+   ImageSizeRaw->{169, 48},
+   PlotRange->{{0, 169}, {0, 48}}]], "Input",ExpressionUUID->
+  "b4827354-87c5-44f8-8abc-7b236b1d2e47"],
+ ",\n\nin which \[Theta] is the angle of rotation, taking positive values to \
+mean clockwise; as indicated above. In this case, \[Theta] takes on values ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"i", 
+    FractionBox[
+     RowBox[{"2", " ", "\[Pi]"}], "n"]}], TraditionalForm]],ExpressionUUID->
+  "f2295086-1ab9-49ac-90fa-aadfa02c4ba3"],
+ ", in which n = numvertices and i | i \[Element] {1, 2, 3, ..., n}."
+}], "Text",
+ CellChangeTimes->{{3.7998800063025723`*^9, 3.799880042998184*^9}, 
+   3.7998800776495943`*^9, {3.799880111383383*^9, 3.7998803507997303`*^9}, {
+   3.799922476499626*^9, 3.7999224881989727`*^9}, {3.7999259886674023`*^9, 
+   3.79992599022619*^9}, {3.799959642899006*^9, 3.799959646067361*^9}, {
+   3.799960030734453*^9, 3.799960100178957*^9}, {3.799960167636919*^9, 
+   3.799960192916911*^9}, {3.799963125738035*^9, 3.7999632148887177`*^9}, {
+   3.800050325499655*^9, 3.800050396001679*^9}, {3.800050518611567*^9, 
+   3.800050520103984*^9}, {3.8000526239419403`*^9, 3.800052646352702*^9}, {
+   3.800053027500619*^9, 
+   3.800053027606349*^9}},ExpressionUUID->"5bf531c0-8f01-4e38-bc29-\
+e589dd37edbc"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"RR", " ", "=", " ", 
+   RowBox[{"RotationMatrix", "[", " ", 
+    RowBox[{"2", " ", "i", " ", 
+     RowBox[{"Pi", " ", "/", " ", "numvertices"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"RR", "//", "MatrixForm"}]}], "Input",
+ CellChangeTimes->{{3.799880394214991*^9, 3.799880399675354*^9}, {
+   3.799880430525896*^9, 3.7998804606810713`*^9}, {3.799880504297678*^9, 
+   3.799880508619791*^9}, 3.799880542317341*^9, {3.799922494894927*^9, 
+   3.7999224950621223`*^9}},ExpressionUUID->"be498ef0-ad0f-464d-828c-\
+d6b9128acdc6"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {
+      RowBox[{"Cos", "[", 
+       FractionBox[
+        RowBox[{"2", " ", "i", " ", "\[Pi]"}], "9"], "]"}], 
+      RowBox[{"-", 
+       RowBox[{"Sin", "[", 
+        FractionBox[
+         RowBox[{"2", " ", "i", " ", "\[Pi]"}], "9"], "]"}]}]},
+     {
+      RowBox[{"Sin", "[", 
+       FractionBox[
+        RowBox[{"2", " ", "i", " ", "\[Pi]"}], "9"], "]"}], 
+      RowBox[{"Cos", "[", 
+       FractionBox[
+        RowBox[{"2", " ", "i", " ", "\[Pi]"}], "9"], "]"}]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.79988050083212*^9, 3.7998805088807096`*^9}, 
+   3.7998805439011183`*^9, 3.799922055805438*^9, 3.7999224968159113`*^9, 
+   3.799928180162793*^9, 3.7999431538593607`*^9, 3.7999433392134657`*^9, {
+   3.7999622546406393`*^9, 3.79996228344123*^9}, 3.799963293359378*^9, 
+   3.800050670239294*^9, 
+   3.800188190911202*^9},ExpressionUUID->"bb66a984-db3c-46e8-81f4-\
+fcb2f54d391b"]
+}, Open  ]],
+
+Cell["Compute the vertices.", "Text",
+ CellChangeTimes->{{3.799880561923729*^9, 3.7998805682200212`*^9}, {
+  3.800050534998065*^9, 
+  3.800050542441781*^9}},ExpressionUUID->"91e19678-51b9-47b1-a84d-\
+58430fb7a33d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"vertices", " ", "=", " ", 
+  RowBox[{"Table", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0", ",", "1"}], "}"}], " ", ".", " ", "RR"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", " ", "0", ",", " ", "numvertices"}], "}"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.629321678413664*^9, 3.6293218002139606`*^9}, {
+   3.629402211831658*^9, 3.629402221439825*^9}, {3.629402594128503*^9, 
+   3.629402621662993*^9}, {3.629402848703733*^9, 3.629402852797742*^9}, {
+   3.6294040311204147`*^9, 3.629404038607346*^9}, 3.799880422468871*^9, {
+   3.799880578882523*^9, 3.79988063407546*^9}, {3.799880677321664*^9, 
+   3.799880683472452*^9}, 3.799922452375166*^9, {3.7999225116023903`*^9, 
+   3.7999225304925756`*^9}},ExpressionUUID->"b9705333-9a67-4dff-9565-\
+0911ddef45c8"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Sin", "[", 
+      FractionBox[
+       RowBox[{"2", " ", "\[Pi]"}], "9"], "]"}], ",", 
+     RowBox[{"Cos", "[", 
+      FractionBox[
+       RowBox[{"2", " ", "\[Pi]"}], "9"], "]"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Cos", "[", 
+      FractionBox["\[Pi]", "18"], "]"}], ",", 
+     RowBox[{"Sin", "[", 
+      FractionBox["\[Pi]", "18"], "]"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox[
+      SqrtBox["3"], "2"], ",", 
+     RowBox[{"-", 
+      FractionBox["1", "2"]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Sin", "[", 
+      FractionBox["\[Pi]", "9"], "]"}], ",", 
+     RowBox[{"-", 
+      RowBox[{"Cos", "[", 
+       FractionBox["\[Pi]", "9"], "]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"Sin", "[", 
+       FractionBox["\[Pi]", "9"], "]"}]}], ",", 
+     RowBox[{"-", 
+      RowBox[{"Cos", "[", 
+       FractionBox["\[Pi]", "9"], "]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", 
+      FractionBox[
+       SqrtBox["3"], "2"]}], ",", 
+     RowBox[{"-", 
+      FractionBox["1", "2"]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"Cos", "[", 
+       FractionBox["\[Pi]", "18"], "]"}]}], ",", 
+     RowBox[{"Sin", "[", 
+      FractionBox["\[Pi]", "18"], "]"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"Sin", "[", 
+       FractionBox[
+        RowBox[{"2", " ", "\[Pi]"}], "9"], "]"}]}], ",", 
+     RowBox[{"Cos", "[", 
+      FractionBox[
+       RowBox[{"2", " ", "\[Pi]"}], "9"], "]"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.799880638633191*^9, 3.799880685088492*^9, 3.799922055976795*^9, 
+   3.799922531787167*^9, 3.7999281802131147`*^9, 3.799943153873974*^9, 
+   3.799943339230077*^9, {3.799962254655939*^9, 3.799962283473284*^9}, 
+   3.799963293378108*^9, 3.8000506703082657`*^9, 
+   3.80018819126753*^9},ExpressionUUID->"2ba4e625-09ae-40c9-b9d9-\
+3f2716075dc4"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Define lines as those between vertices[[1]] & vertices[[2]], vertices[[2]] \
+& vertices[[3]], vertices[[3]] & vertices[[4]] ... \
+vertices[[-1+Length[vertices]]] & ",
+ StyleBox["vertices[[Length[vertices]]]",
+  FontColor->RGBColor[1, 0, 0]],
+ ".  Note this is the justification of the ",
+ StyleBox["duplication of the initial vertex",
+  FontColor->RGBColor[1, 0, 0]],
+ ". "
+}], "Text",
+ CellChangeTimes->{{3.79992558542581*^9, 3.79992571805305*^9}, {
+  3.799925885812831*^9, 
+  3.799925922761747*^9}},ExpressionUUID->"bb3b1f9a-f96d-4ce5-a5f6-\
+551f36d72c3e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"lines", " ", "=", " ", 
+   RowBox[{"Line", "[", "\[IndentingNewLine]", 
+    RowBox[{"Table", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"vertices", "[", 
+         RowBox[{"[", "i", "]"}], "]"}], ",", " ", 
+        RowBox[{"vertices", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", "+", "i"}], "]"}], "]"}]}], "}"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", " ", "1", ",", " ", 
+        RowBox[{
+         RowBox[{"-", "1"}], "+", 
+         RowBox[{"Length", "[", "vertices", "]"}]}]}], "}"}]}], 
+     "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.7999262733487377`*^9, 3.799926280181691*^9}, {
+  3.799926870774919*^9, 3.799926873964074*^9}, {3.7999269997566442`*^9, 
+  3.799927005797455*^9}, {3.799927057060775*^9, 3.799927073732534*^9}, {
+  3.799927137895907*^9, 3.799927182749866*^9}, {3.799927290573636*^9, 
+  3.799927291105612*^9}, {3.79996218145722*^9, 
+  3.7999621931833563`*^9}},ExpressionUUID->"ab5bac50-7387-46d9-ac7c-\
+412c2bfcfe3d"],
+
+Cell["Show the object.", "Text",
+ CellChangeTimes->{{3.799962209218996*^9, 
+  3.799962221745408*^9}},ExpressionUUID->"be3d1655-93a7-4b67-8b79-\
+274057045504"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", "lines", "]"}]], "Input",ExpressionUUID->"b30f4a0c-d6a6-4fde-9daa-722964e07985"],
+
+Cell[BoxData[
+ GraphicsBox[
+  LineBox[NCache[{{{0, 1}, {
+      Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}}, {{
+      Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}, {
+      Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}}, {{
+      Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}, {
+      Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}}, {{
+      Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {
+      Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}}, {{
+      Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}, {-
+       Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}}, {{-
+       Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}, {
+      Rational[-1, 2] 3^Rational[1, 2], Rational[-1, 2]}}, {{
+      Rational[-1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {-
+       Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}}, {{-
+       Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}, {-
+       Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}}, {{-
+       Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}, {0, 1}}}, {{{0, 1}, {
+      0.6427876096865393, 0.766044443118978}}, {{0.6427876096865393, 
+     0.766044443118978}, {0.984807753012208, 0.17364817766693033`}}, {{
+     0.984807753012208, 0.17364817766693033`}, {0.8660254037844386, -0.5}}, {{
+     0.8660254037844386, -0.5}, {0.3420201433256687, -0.9396926207859084}}, {{
+     0.3420201433256687, -0.9396926207859084}, {-0.3420201433256687, \
+-0.9396926207859084}}, {{-0.3420201433256687, -0.9396926207859084}, \
+{-0.8660254037844386, -0.5}}, {{-0.8660254037844386, -0.5}, \
+{-0.984807753012208, 0.17364817766693033`}}, {{-0.984807753012208, 
+     0.17364817766693033`}, {-0.6427876096865393, 
+     0.766044443118978}}, {{-0.6427876096865393, 0.766044443118978}, {0, 
+      1}}}]]]], "Output",
+ CellChangeTimes->{{3.799962254736073*^9, 3.799962283519759*^9}, 
+   3.799963293437955*^9, 3.800050670382053*^9, 
+   3.8001881913288794`*^9},ExpressionUUID->"2bd221c1-5f7d-4241-95e5-\
+8feace4da792"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.799927489281638*^9, 3.799927496574362*^9}, 
+   3.7999621904655647`*^9},ExpressionUUID->"3e55b967-9f94-4fde-befb-\
+dd24462e83b7"],
+
+Cell[TextData[{
+ "Highlight the line containing the duplicated vertex in ",
+ StyleBox["red",
+  FontColor->RGBColor[1, 0, 0]],
+ ". "
+}], "Text",
+ CellChangeTimes->{{3.799943611295508*^9, 
+  3.799943623989847*^9}},ExpressionUUID->"20132896-6873-493a-a03d-\
+fcab45dc4585"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Show", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Graphics", "[", 
+    RowBox[{"Line", "[", 
+     RowBox[{"Table", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"lines", "[", 
+        RowBox[{"[", 
+         RowBox[{"1", ",", "i"}], "]"}], "]"}], ",", " ", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", " ", "1", ",", " ", 
+         RowBox[{
+          RowBox[{"-", "1"}], "+", " ", "numvertices"}]}], "}"}]}], "]"}], 
+     "]"}], "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Graphics", "[", 
+    RowBox[{"{", 
+     RowBox[{"Red", ",", " ", 
+      RowBox[{"Line", "[", 
+       RowBox[{"lines", "[", 
+        RowBox[{"[", 
+         RowBox[{"1", ",", "numvertices"}], "]"}], "]"}], "]"}]}], "}"}], 
+    "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.7999432097830267`*^9, 3.7999433187100763`*^9}, 
+   3.799943352684291*^9, {3.7999434608435698`*^9, 3.799943461963524*^9}, {
+   3.799943493550148*^9, 
+   3.799943504742134*^9}},ExpressionUUID->"102233e3-cb32-4de3-9dfb-\
+8d8bc902924a"],
+
+Cell[BoxData[
+ GraphicsBox[{
+   LineBox[NCache[{{{0, 1}, {
+       Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}}, {{
+       Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}, {
+       Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}}, {{
+       Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}, {
+       Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}}, {{
+       Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {
+       Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}}, {{
+       Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}, {-
+        Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}}, {{-
+        Sin[Rational[1, 9] Pi], -Cos[Rational[1, 9] Pi]}, {
+       Rational[-1, 2] 3^Rational[1, 2], Rational[-1, 2]}}, {{
+       Rational[-1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {-
+        Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}}, {{-
+        Cos[Rational[1, 18] Pi], Sin[Rational[1, 18] Pi]}, {-
+        Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}}}, {{{0, 1}, {
+       0.6427876096865393, 0.766044443118978}}, {{0.6427876096865393, 
+      0.766044443118978}, {0.984807753012208, 0.17364817766693033`}}, {{
+      0.984807753012208, 0.17364817766693033`}, {
+      0.8660254037844386, -0.5}}, {{0.8660254037844386, -0.5}, {
+      0.3420201433256687, -0.9396926207859084}}, {{
+      0.3420201433256687, -0.9396926207859084}, {-0.3420201433256687, \
+-0.9396926207859084}}, {{-0.3420201433256687, -0.9396926207859084}, \
+{-0.8660254037844386, -0.5}}, {{-0.8660254037844386, -0.5}, \
+{-0.984807753012208, 0.17364817766693033`}}, {{-0.984807753012208, 
+      0.17364817766693033`}, {-0.6427876096865393, 0.766044443118978}}}]], 
+   {RGBColor[1, 0, 0], 
+    LineBox[NCache[{{-Sin[Rational[2, 9] Pi], Cos[Rational[2, 9] Pi]}, {0, 
+       1}}, {{-0.6427876096865393, 0.766044443118978}, {0, 1}}]]}}]], "Output",\
+
+ CellChangeTimes->{
+  3.799943233708001*^9, {3.7999432834914837`*^9, 3.7999433394390993`*^9}, 
+   3.799943463147655*^9, 3.799943505718535*^9, {3.799962254853664*^9, 
+   3.799962283580044*^9}, 3.799963293510271*^9, 3.800050670431999*^9, 
+   3.8001881913810062`*^9},ExpressionUUID->"4ad21fb1-1179-4c3b-b90e-\
+8bc8ce55e101"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{807.75, 680.25},
+WindowMargins->{{22.5, Automatic}, {-1.5, Automatic}},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic},
+PrintingOptions->{"PaperOrientation"->"Portrait",
+"PaperSize"->{Automatic, Automatic},
+"PostScriptOutputFile"->"/home/david/print.pdf"},
+FrontEndVersion->"12.1 for Linux x86 (64-bit) (March 18, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"0c1c9fd8-95a6-460a-bf1b-ac579bbed538"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 160, 3, 98, "Title",ExpressionUUID->"969e6714-a59c-4d3f-9d75-e00f7d8b7b2b"],
+Cell[743, 27, 510, 8, 35, "Text",ExpressionUUID->"db93a966-6d4f-4e83-aa73-f274025bcb39"],
+Cell[1256, 37, 714, 17, 196, "Text",ExpressionUUID->"3630ed3d-5165-4127-8c22-b13aeac4d0a0"],
+Cell[1973, 56, 351, 6, 35, "Text",ExpressionUUID->"8023e40d-e453-4cd2-9faf-9a898070bf8a"],
+Cell[2327, 64, 557, 10, 81, "Text",ExpressionUUID->"141a584b-ee48-4530-95ff-340adecfc75b"],
+Cell[2887, 76, 190, 3, 40, "Text",ExpressionUUID->"f10ad161-96a8-441f-859b-38f8adcec4fa"],
+Cell[3080, 81, 2086, 42, 222, "Text",ExpressionUUID->"9bd22c0a-b9d3-42b1-8f8c-54fb4bba4be6"],
+Cell[5169, 125, 209, 3, 40, "Text",ExpressionUUID->"a3b81cd0-b417-448e-8b1d-cacd4367104e"],
+Cell[5381, 130, 331, 8, 81, "Text",ExpressionUUID->"d66f5129-59b9-4633-9311-b8680e4588c4"],
+Cell[CellGroupData[{
+Cell[5737, 142, 642, 16, 92, "Input",ExpressionUUID->"00cb8407-1b72-4a23-9667-c69030aaa6e7"],
+Cell[6382, 160, 197, 4, 33, "Output",ExpressionUUID->"472ba4e3-abc7-4cde-bfdb-667f6dbac881"]
+}, Open  ]],
+Cell[6594, 167, 242, 4, 35, "Text",ExpressionUUID->"49f252f9-97b1-4baa-9468-f1d9aadc72b7"],
+Cell[CellGroupData[{
+Cell[6861, 175, 825, 18, 51, "Input",ExpressionUUID->"6b03e2f6-2feb-49b4-b817-25b37e497bc7"],
+Cell[7689, 195, 207, 3, 33, "Output",ExpressionUUID->"b745d1de-cc31-45e3-9800-3d8a4d0b6f03"]
+}, Open  ]],
+Cell[7911, 201, 3348, 62, 250, "Text",ExpressionUUID->"5bf531c0-8f01-4e38-bc29-e589dd37edbc"],
+Cell[CellGroupData[{
+Cell[11284, 267, 572, 12, 52, "Input",ExpressionUUID->"be498ef0-ad0f-464d-828c-d6b9128acdc6"],
+Cell[11859, 281, 1419, 37, 66, "Output",ExpressionUUID->"bb66a984-db3c-46e8-81f4-fcb2f54d391b"]
+}, Open  ]],
+Cell[13293, 321, 214, 4, 35, "Text",ExpressionUUID->"91e19678-51b9-47b1-a84d-58430fb7a33d"],
+Cell[CellGroupData[{
+Cell[13532, 329, 890, 18, 92, "Input",ExpressionUUID->"b9705333-9a67-4dff-9565-0911ddef45c8"],
+Cell[14425, 349, 2179, 71, 94, "Output",ExpressionUUID->"2ba4e625-09ae-40c9-b9d9-3f2716075dc4"]
+}, Open  ]],
+Cell[16619, 423, 576, 14, 81, "Text",ExpressionUUID->"bb3b1f9a-f96d-4ce5-a5f6-551f36d72c3e"],
+Cell[17198, 439, 1132, 27, 133, "Input",ExpressionUUID->"ab5bac50-7387-46d9-ac7c-412c2bfcfe3d"],
+Cell[18333, 468, 158, 3, 35, "Text",ExpressionUUID->"be3d1655-93a7-4b67-8b79-274057045504"],
+Cell[CellGroupData[{
+Cell[18516, 475, 120, 1, 29, "Input",ExpressionUUID->"b30f4a0c-d6a6-4fde-9daa-722964e07985"],
+Cell[18639, 478, 1959, 33, 371, "Output",ExpressionUUID->"2bd221c1-5f7d-4241-95e5-8feace4da792"]
+}, Open  ]],
+Cell[20613, 514, 177, 3, 29, "Input",ExpressionUUID->"3e55b967-9f94-4fde-befb-dd24462e83b7"],
+Cell[20793, 519, 269, 8, 35, "Text",ExpressionUUID->"20132896-6873-493a-a03d-fcab45dc4585"],
+Cell[CellGroupData[{
+Cell[21087, 531, 1053, 27, 113, "Input",ExpressionUUID->"102233e3-cb32-4de3-9dfb-8d8bc902924a"],
+Cell[22143, 560, 2149, 37, 371, "Output",ExpressionUUID->"4ad21fb1-1179-4c3b-b90e-8bc8ce55e101"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
